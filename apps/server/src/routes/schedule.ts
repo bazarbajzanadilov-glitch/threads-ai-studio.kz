@@ -58,17 +58,23 @@ scheduleRouter.put("/settings", (req: Request, res: Response) => {
 
 scheduleRouter.post("/preview", (req: Request, res: Response) => {
   const db = getDb();
-  const settings = (db.prepare("SELECT * FROM schedule_settings WHERE id = 1").get() ?? {}) as any;
+  const settings = (db.prepare("SELECT * FROM schedule_settings WHERE id = 1").get() ?? {}) as {
+    window_start?: string;
+    window_end?: string;
+    min_delay_minutes?: number;
+    max_delay_minutes?: number;
+    randomize_delay?: number;
+  };
   const accounts = db.prepare("SELECT username FROM platform_accounts WHERE status = 'active' AND is_active = 1").all() as Array<{ username: string }>;
 
   const accountCount = req.body?.account_count ?? Math.max(1, accounts.length);
   const randomize = req.body?.randomize !== undefined ? Boolean(req.body.randomize) : Boolean(settings.randomize_delay ?? 1);
 
   const slots = calculateJitterSlots({
-    windowStart: req.body?.window_start ?? settings.window_start ?? "11:00",
+    windowStart: req.body?.window_start ?? settings.window_start ?? "12:00",
     windowEnd: req.body?.window_end ?? settings.window_end ?? "21:00",
     minDelayMinutes: req.body?.min_delay_minutes ?? settings.min_delay_minutes ?? 15,
-    maxDelayMinutes: req.body?.max_delay_minutes ?? settings.max_delay_minutes ?? 40,
+    maxDelayMinutes: req.body?.max_delay_minutes ?? settings.max_delay_minutes ?? 45,
     randomize,
     accountCount,
     baseDate: req.body?.date ? new Date(req.body.date) : new Date(),

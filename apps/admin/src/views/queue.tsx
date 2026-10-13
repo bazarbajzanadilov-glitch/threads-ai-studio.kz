@@ -164,7 +164,7 @@ export function QueueView({ notify }: QueueProps) {
     setActionInProgressId(post.id);
     try {
       const res = await api.togglePostPause(post.id);
-      setPosts((prev) => prev.map((p) => (p.id === post.id ? { ...p, status: res.status as any } : p)));
+      setPosts((prev) => prev.map((p) => (p.id === post.id ? { ...p, status: res.status } : p)));
       notify(res.status === "paused" ? "Публикация приостановлена" : "Публикация возобновлена", "info");
     } catch (err) {
       notify(err instanceof Error ? err.message : "Ошибка при смене статуса", "error");
@@ -193,9 +193,6 @@ export function QueueView({ notify }: QueueProps) {
         <div>
           <span class="eyebrow">Очередь публикаций</span>
           <h1>Публикации Threads</h1>
-          <p>
-            Создание постов строго формата <strong>Текст + 1 Изображение</strong>. Автоматическая публикация по расписанию с защитным джиттером.
-          </p>
         </div>
         <div class="header-actions">
           <button class="button button--primary" type="button" onClick={() => setModalOpen(true)}>
@@ -422,9 +419,6 @@ export function QueueView({ notify }: QueueProps) {
                     </option>
                   ))}
                 </select>
-                <small class="form-hint">
-                  При выборе всех аккаунтов пост будет размножен и распределён с интервалом между аккаунтами (15-40 минут) для защиты от анти-спам фильтров Meta.
-                </small>
               </div>
 
               {/* Timing Options */}

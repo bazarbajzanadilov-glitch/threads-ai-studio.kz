@@ -129,11 +129,8 @@ export function AccountsView({ notify }: AccountsProps) {
     <div class="view accounts-view">
       <header class="view-header">
         <div>
-          <span class="eyebrow">Управление мультиаккаунтом</span>
+          <span class="eyebrow">Мультиаккаунт</span>
           <h1>Подключенные аккаунты Threads</h1>
-          <p>
-            Поддержка до ~10 аккаунтов. Автоматическое обновление 60-дневных токенов и гибкое управление публикациями.
-          </p>
         </div>
         <div class="header-actions">
           <button class="button button--primary" type="button" onClick={() => setModalOpen(true)}>
@@ -231,13 +228,16 @@ export function AccountsView({ notify }: AccountsProps) {
               </div>
 
               <div class="account-card__actions">
-                <label class="switch-label">
+                <label class="ios-switch">
                   <input
                     type="checkbox"
                     checked={account.is_active}
                     onChange={() => void handleToggle(account)}
                   />
-                  <span>{account.is_active ? "Включен" : "На паузе"}</span>
+                  <span class="ios-switch-track">
+                    <span class="ios-switch-thumb" />
+                  </span>
+                  <span class="ios-switch-label">{account.is_active ? "Включен" : "На паузе"}</span>
                 </label>
 
                 <div class="action-buttons">
@@ -295,7 +295,7 @@ export function AccountsView({ notify }: AccountsProps) {
             {modalMode === "manual" ? (
               <form onSubmit={handleManualSubmit} class="modal-form">
                 <p class="modal-description">
-                  Введите долгосрочный Access Token аккаунта Threads (сгенерированный в Meta Developer Dashboard или Graph API Explorer). Профиль и аватар загрузятся автоматически.
+                  Введите Long-Lived Access Token аккаунта Threads. Имя пользователя и аватар загрузятся автоматически.
                 </p>
 
                 <div class="form-group">
@@ -317,30 +317,6 @@ export function AccountsView({ notify }: AccountsProps) {
                     value={manualUsername}
                     onInput={(e) => setManualUsername((e.target as HTMLInputElement).value)}
                   />
-                  <small>Если не указан, имя пользователя будет определено автоматически из Meta API.</small>
-                </div>
-
-                <div style={{
-                  margin: "0.75rem 0",
-                  padding: "0.75rem 1rem",
-                  backgroundColor: "rgba(99, 102, 241, 0.05)",
-                  border: "1px solid rgba(99, 102, 241, 0.2)",
-                  borderRadius: "8px",
-                  fontSize: "0.85rem",
-                  lineHeight: 1.5
-                }}>
-                  <strong style={{ display: "block", marginBottom: "0.35rem", color: "#818cf8" }}>
-                    📖 Как получить Access Token за 2 минуты:
-                  </strong>
-                  <ol style={{ margin: "0 0 0.5rem 1.25rem", padding: 0 }}>
-                    <li>Откройте <strong>developers.facebook.com</strong> и выберите ваше приложение Meta.</li>
-                    <li>В левом меню нажмите <strong>Threads API</strong> → <strong>User Token Generator</strong>.</li>
-                    <li>Добавьте ваш Threads-аккаунт в тестеры и подтвердите авторизацию.</li>
-                    <li>Нажмите <strong>Generate Token</strong>, скопируйте токен и вставьте в поле выше.</li>
-                  </ol>
-                  <div style={{ fontSize: "0.78rem", color: "#a5b4fc" }}>
-                    💡 Сервер автоматически обменяет его на долгоживущий (60 дней) и будет продлевать сам в фоне!
-                  </div>
                 </div>
 
                 <div class="modal-actions">

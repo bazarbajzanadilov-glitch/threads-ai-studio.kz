@@ -21,6 +21,7 @@ import { QueueView } from "./views/queue";
 import { ScheduleView } from "./views/schedule";
 import { LogsView } from "./views/logs";
 import { LoginView } from "./views/login";
+import { ErrorBoundary } from "./components/ui/ErrorBoundary";
 
 type Tab = "dashboard" | "accounts" | "queue" | "schedule" | "logs";
 
@@ -188,7 +189,8 @@ export function App() {
         <div class="topbar-right">
           <div class="almaty-clock-pill">
             <Clock size={14} />
-            <span>Алматы: <strong>{clock}</strong></span>
+            <span class="clock-city-label">Алматы: </span>
+            <strong class="clock-time">{clock}</strong>
           </div>
 
           {currentUser ? (
@@ -219,11 +221,13 @@ export function App() {
 
       {/* Main Content Area */}
       <main class="app-main">
-        {activeTab === "dashboard" && <DashboardView notify={notify} onNavigate={switchTab} />}
-        {activeTab === "accounts" && <AccountsView notify={notify} />}
-        {activeTab === "queue" && <QueueView notify={notify} />}
-        {activeTab === "schedule" && <ScheduleView notify={notify} />}
-        {activeTab === "logs" && <LogsView notify={notify} />}
+        <ErrorBoundary>
+          {activeTab === "dashboard" && <DashboardView notify={notify} onNavigate={switchTab} />}
+          {activeTab === "accounts" && <AccountsView notify={notify} />}
+          {activeTab === "queue" && <QueueView notify={notify} />}
+          {activeTab === "schedule" && <ScheduleView notify={notify} />}
+          {activeTab === "logs" && <LogsView notify={notify} />}
+        </ErrorBoundary>
       </main>
 
       {/* Mobile Floating Bottom Dock (single consistent dock across all tabs) */}

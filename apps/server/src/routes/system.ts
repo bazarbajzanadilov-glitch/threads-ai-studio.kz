@@ -24,15 +24,19 @@ function getDirectorySizeBytes(dirPath: string): number {
   }
 }
 
+interface CountRow {
+  count: number;
+}
+
 systemRouter.get("/status", (_req: Request, res: Response) => {
   const db = getDb();
 
-  const accountsTotal = (db.prepare("SELECT COUNT(*) as count FROM platform_accounts").get() as any)?.count ?? 0;
-  const accountsActive = (db.prepare("SELECT COUNT(*) as count FROM platform_accounts WHERE status = 'active' AND is_active = 1").get() as any)?.count ?? 0;
+  const accountsTotal = (db.prepare("SELECT COUNT(*) as count FROM platform_accounts").get() as CountRow | undefined)?.count ?? 0;
+  const accountsActive = (db.prepare("SELECT COUNT(*) as count FROM platform_accounts WHERE status = 'active' AND is_active = 1").get() as CountRow | undefined)?.count ?? 0;
 
-  const postsScheduled = (db.prepare("SELECT COUNT(*) as count FROM posts WHERE status = 'scheduled'").get() as any)?.count ?? 0;
-  const postsPublished = (db.prepare("SELECT COUNT(*) as count FROM posts WHERE status = 'published'").get() as any)?.count ?? 0;
-  const postsFailed = (db.prepare("SELECT COUNT(*) as count FROM posts WHERE status = 'failed'").get() as any)?.count ?? 0;
+  const postsScheduled = (db.prepare("SELECT COUNT(*) as count FROM posts WHERE status = 'scheduled'").get() as CountRow | undefined)?.count ?? 0;
+  const postsPublished = (db.prepare("SELECT COUNT(*) as count FROM posts WHERE status = 'published'").get() as CountRow | undefined)?.count ?? 0;
+  const postsFailed = (db.prepare("SELECT COUNT(*) as count FROM posts WHERE status = 'failed'").get() as CountRow | undefined)?.count ?? 0;
 
   const storageUsedBytes = getDirectorySizeBytes(UPLOADS_DIR);
 
@@ -60,16 +64,16 @@ systemRouter.get("/status", (_req: Request, res: Response) => {
 systemRouter.get("/dashboard", (_req: Request, res: Response) => {
   const db = getDb();
 
-  const accountsTotal = (db.prepare("SELECT COUNT(*) as count FROM platform_accounts").get() as any)?.count ?? 0;
-  const accountsActive = (db.prepare("SELECT COUNT(*) as count FROM platform_accounts WHERE status = 'active' AND is_active = 1").get() as any)?.count ?? 0;
+  const accountsTotal = (db.prepare("SELECT COUNT(*) as count FROM platform_accounts").get() as CountRow | undefined)?.count ?? 0;
+  const accountsActive = (db.prepare("SELECT COUNT(*) as count FROM platform_accounts WHERE status = 'active' AND is_active = 1").get() as CountRow | undefined)?.count ?? 0;
   const accountsList = db.prepare("SELECT id, username, status, is_active, profile_picture_url, token_expires_at FROM platform_accounts ORDER BY is_active DESC, username ASC LIMIT 10").all();
 
-  const postsScheduled = (db.prepare("SELECT COUNT(*) as count FROM posts WHERE status = 'scheduled'").get() as any)?.count ?? 0;
-  const postsPublishedTotal = (db.prepare("SELECT COUNT(*) as count FROM posts WHERE status = 'published'").get() as any)?.count ?? 0;
+  const postsScheduled = (db.prepare("SELECT COUNT(*) as count FROM posts WHERE status = 'scheduled'").get() as CountRow | undefined)?.count ?? 0;
+  const postsPublishedTotal = (db.prepare("SELECT COUNT(*) as count FROM posts WHERE status = 'published'").get() as CountRow | undefined)?.count ?? 0;
   
   const yesterdayIso = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-  const postsPublishedToday = (db.prepare("SELECT COUNT(*) as count FROM posts WHERE status = 'published' AND published_at >= ?").get(yesterdayIso) as any)?.count ?? 0;
-  const postsFailed = (db.prepare("SELECT COUNT(*) as count FROM posts WHERE status = 'failed'").get() as any)?.count ?? 0;
+  const postsPublishedToday = (db.prepare("SELECT COUNT(*) as count FROM posts WHERE status = 'published' AND published_at >= ?").get(yesterdayIso) as CountRow | undefined)?.count ?? 0;
+  const postsFailed = (db.prepare("SELECT COUNT(*) as count FROM posts WHERE status = 'failed'").get() as CountRow | undefined)?.count ?? 0;
 
   const nextPost = db.prepare(`
     SELECT p.*, a.username as account_username, a.profile_picture_url as account_avatar

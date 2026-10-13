@@ -74,7 +74,7 @@ export function createApp(customDbPath?: string) {
   }
 
   // Error handling middleware
-  app.use((err: any, _req: Request, res: Response, _next: any) => {
+  app.use((err: Error & { status?: number }, _req: Request, res: Response, _next: (err?: unknown) => void) => {
     console.error("Unhandled error:", err);
     res.status(err.status || 500).json({
       error: {

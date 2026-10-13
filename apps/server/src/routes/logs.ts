@@ -8,7 +8,7 @@ logsRouter.get("/", (req: Request, res: Response) => {
   const { level, category, limit = "50", offset = "0" } = req.query;
 
   let query = "SELECT * FROM events WHERE 1=1";
-  const params: any[] = [];
+  const params: unknown[] = [];
 
   if (level && level !== "all") {
     query += " AND level = ?";

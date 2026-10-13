@@ -17,7 +17,7 @@ postsRouter.get("/", (req: Request, res: Response) => {
     LEFT JOIN platform_accounts a ON p.account_id = a.id
     WHERE 1=1
   `;
-  const params: any[] = [];
+  const params: unknown[] = [];
 
   if (status && status !== "all") {
     query += " AND p.status = ?";
@@ -35,7 +35,7 @@ postsRouter.get("/", (req: Request, res: Response) => {
   const posts = db.prepare(query).all(...params);
 
   let countQuery = "SELECT COUNT(*) as total FROM posts WHERE 1=1";
-  const countParams: any[] = [];
+  const countParams: unknown[] = [];
   if (status && status !== "all") {
     countQuery += " AND status = ?";
     countParams.push(status);
@@ -70,14 +70,20 @@ postsRouter.post("/", async (req: Request, res: Response) => {
         return;
       }
 
-      const settings = db.prepare("SELECT * FROM schedule_settings WHERE id = 1").get() as any;
+      const settings = db.prepare("SELECT * FROM schedule_settings WHERE id = 1").get() as {
+        window_start?: string;
+        window_end?: string;
+        min_delay_minutes?: number;
+        max_delay_minutes?: number;
+        randomize_delay?: number;
+      } | undefined;
       const scheduledBaseDate = new Date(validated.scheduled_at);
       const isScheduledNow = Math.abs(scheduledBaseDate.getTime() - Date.now()) < 5 * 60 * 1000;
       const slots = calculateJitterSlots({
-        windowStart: settings?.window_start ?? "11:00",
+        windowStart: settings?.window_start ?? "12:00",
         windowEnd: settings?.window_end ?? "21:00",
         minDelayMinutes: settings?.min_delay_minutes ?? 15,
-        maxDelayMinutes: settings?.max_delay_minutes ?? 40,
+        maxDelayMinutes: settings?.max_delay_minutes ?? 45,
         randomize: Boolean(settings?.randomize_delay ?? 1),
         accountCount: activeAccounts.length,
         baseDate: scheduledBaseDate,
@@ -200,7 +206,7 @@ postsRouter.patch("/:id", (req: Request, res: Response) => {
   try {
     const patch = parseContentPatch(req.body);
     const updates: string[] = ["updated_at = ?"];
-    const params: any[] = [new Date().toISOString()];
+    const params: unknown[] = [new Date().toISOString()];
 
     if (patch.text !== undefined) {
       updates.push("text = ?");

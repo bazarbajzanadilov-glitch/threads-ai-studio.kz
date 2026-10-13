@@ -52,9 +52,6 @@ export function LogsView({ notify }: LogsProps) {
         <div>
           <span class="eyebrow">Мониторинг и Аудит</span>
           <h1>История и Журнал событий</h1>
-          <p>
-            Хронология завершённых публикаций с прямыми ссылками в Threads и системный журнал операций.
-          </p>
         </div>
         <div class="header-actions">
           <button class="button button--secondary" type="button" onClick={() => void loadData()}>

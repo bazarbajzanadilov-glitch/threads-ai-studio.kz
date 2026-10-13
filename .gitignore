@@ -19,3 +19,4 @@ data/
 *.db
 env.local
 *.local
+scripts/ssh-deploy.mjs

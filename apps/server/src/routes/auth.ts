@@ -52,6 +52,10 @@ export function verifySessionToken(token: string): { email: string } | null {
   }
 }
 
+export interface AuthenticatedRequest extends Request {
+  user?: { email: string };
+}
+
 export function requireAuth(req: Request, res: Response, next: NextFunction): void {
   // Check authorization header or cookie
   const authHeader = req.headers.authorization;
@@ -70,7 +74,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction): vo
     return;
   }
 
-  (req as any).user = session;
+  (req as AuthenticatedRequest).user = session;
   next();
 }
 
@@ -111,10 +115,10 @@ authRouter.post("/login", (req: Request, res: Response) => {
 });
 
 authRouter.get("/me", requireAuth, (req: Request, res: Response) => {
-  const user = (req as any).user;
+  const user = (req as AuthenticatedRequest).user;
   res.json({
     user: {
-      email: user.email,
+      email: user?.email ?? "",
       role: "admin"
     }
   });

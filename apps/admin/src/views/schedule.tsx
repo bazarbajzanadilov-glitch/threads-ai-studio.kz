@@ -19,11 +19,11 @@ interface ScheduleProps {
 
 export function ScheduleView({ notify }: ScheduleProps) {
   const [settings, setSettings] = useState<ScheduleSettings>({
-    window_start: "11:00",
+    window_start: "12:00",
     window_end: "21:00",
     timezone: "Asia/Almaty",
     min_delay_minutes: 15,
-    max_delay_minutes: 40,
+    max_delay_minutes: 45,
     randomize_delay: 1,
     daily_enabled: 1,
     updated_at: new Date().toISOString(),
@@ -98,9 +98,6 @@ export function ScheduleView({ notify }: ScheduleProps) {
         <div>
           <span class="eyebrow">Автопилот Threads</span>
           <h1>Расписание и Задержки (Jitter)</h1>
-          <p>
-            Окно публикаций и рандомизация пауз для защиты от анти-спам фильтров.
-          </p>
         </div>
       </header>
 

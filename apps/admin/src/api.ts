@@ -1,5 +1,6 @@
 import type {
   AdminUser,
+  ContentState,
   DashboardData,
   JitterSlot,
   PostItem,
@@ -50,9 +51,10 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     window.dispatchEvent(new CustomEvent("auth:expired"));
   }
 
-  const json = (await response.json().catch(() => ({}))) as Record<string, any>;
+  const json = (await response.json().catch(() => ({}))) as Record<string, unknown>;
   if (!response.ok) {
-    throw new ApiError(json.error?.message ?? `Ошибка сервера HTTP ${response.status}`, response.status);
+    const errObj = json.error as { message?: string } | undefined;
+    throw new ApiError(errObj?.message ?? `Ошибка сервера HTTP ${response.status}`, response.status);
   }
 
   return json as T;
@@ -148,8 +150,8 @@ export const api = {
     });
   },
 
-  async togglePostPause(id: string): Promise<{ status: string }> {
-    return request<{ status: string }>(`posts/${id}/toggle-pause`, {
+  async togglePostPause(id: string): Promise<{ status: ContentState }> {
+    return request<{ status: ContentState }>(`posts/${id}/toggle-pause`, {
       method: "POST",
     });
   },

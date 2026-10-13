@@ -47,7 +47,13 @@ async function requestGraph<T>(
     );
   }
 
-  const json = (await response.json().catch(() => ({}))) as Record<string, any>;
+  interface MetaErrorPayload {
+    error?: {
+      message?: string;
+      fbtrace_id?: string;
+    };
+  }
+  const json = (await response.json().catch(() => ({}))) as MetaErrorPayload & T;
   if (!response.ok || json.error) {
     const errorMsg = json.error?.message ?? `Meta Threads API returned HTTP ${response.status}`;
     const fbtrace = json.error?.fbtrace_id;

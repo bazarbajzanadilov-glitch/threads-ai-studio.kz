@@ -23,7 +23,7 @@ describe("Server API Integration Tests", () => {
       DELETE FROM platform_accounts;
       DELETE FROM events;
       UPDATE schedule_settings
-      SET window_start = '11:00', window_end = '21:00', min_delay_minutes = 15, max_delay_minutes = 40
+      SET window_start = '12:00', window_end = '21:00', min_delay_minutes = 15, max_delay_minutes = 45
       WHERE id = 1;
     `);
     app = createApp(testDbPath);
