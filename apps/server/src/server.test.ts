@@ -12,7 +12,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const testDbPath = path.resolve(__dirname, "../../../data/test_threads.db");
 
 describe("Server API Integration Tests", () => {
-  let app: any;
+  let app: ReturnType<typeof createApp>;
   let adminToken: string;
 
   beforeAll(() => {
@@ -32,7 +32,9 @@ describe("Server API Integration Tests", () => {
   afterAll(() => {
     try {
       if (fs.existsSync(testDbPath)) fs.unlinkSync(testDbPath);
-    } catch {}
+    } catch {
+      // ignore cleanup error
+    }
   });
 
   describe("Authentication", () => {
@@ -143,7 +145,7 @@ describe("Server API Integration Tests", () => {
         ) VALUES (?, ?, ?, ?, ?, ?, ?, 'active', 1, ?, ?)
       `).run("acc_test_2", "1002", "tech_studio_almaty", "Tech Studio", "https://example.com/pic2.jpg", "token_456", expiresAt, nowIso, nowIso);
 
-      const count = (db.prepare("SELECT COUNT(*) as c FROM platform_accounts").get() as any).c;
+      const count = (db.prepare("SELECT COUNT(*) as c FROM platform_accounts").get() as { c: number }).c;
       expect(count).toBe(2);
     });
 
@@ -282,7 +284,7 @@ describe("Server API Integration Tests", () => {
         .get("/api/posts?account_id=acc_test_1")
         .set("Authorization", `Bearer ${adminToken}`);
       expect(res.status).toBe(200);
-      expect(res.body.posts.every((p: any) => p.account_id === "acc_test_1")).toBe(true);
+      expect(res.body.posts.every((p: { account_id: string }) => p.account_id === "acc_test_1")).toBe(true);
       expect(res.body.total).toBe(res.body.posts.length);
     });
 

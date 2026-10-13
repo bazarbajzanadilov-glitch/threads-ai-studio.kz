@@ -5,15 +5,14 @@ import {
   Clock,
   History,
   LayoutDashboard,
-  LayoutList,
   LogIn,
   LogOut,
   Send,
   Shield,
-  Users,
-  X
+  Users
 } from "lucide-preact";
 import { api } from "./api";
+import { Modal } from "./components/ui/Modal";
 import type { AdminUser } from "./types";
 import { DashboardView } from "./views/dashboard";
 import { AccountsView } from "./views/accounts";
@@ -282,26 +281,20 @@ export function App() {
       </nav>
 
       {/* Admin Login Modal Sheet */}
-      {showLoginModal && (
-        <div class="trantor-modal-backdrop" onClick={() => setShowLoginModal(false)}>
-          <div class="trantor-modal-sheet" style={{ maxWidth: "440px" }} onClick={(e) => e.stopPropagation()}>
-            <div class="trantor-sheet-handle" />
-            <div class="trantor-sheet-header">
-              <h3>Вход администратора</h3>
-              <button class="trantor-close-btn" onClick={() => setShowLoginModal(false)} type="button">
-                <X size={18} />
-              </button>
-            </div>
-            <LoginView
-              onSuccess={(user) => {
-                setCurrentUser(user);
-                setShowLoginModal(false);
-              }}
-              notify={notify}
-            />
-          </div>
-        </div>
-      )}
+      <Modal
+        open={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        title="Вход администратора"
+        size="sm"
+      >
+        <LoginView
+          onSuccess={(user) => {
+            setCurrentUser(user);
+            setShowLoginModal(false);
+          }}
+          notify={notify}
+        />
+      </Modal>
 
       {/* Toasts */}
       <div class="toast-container">

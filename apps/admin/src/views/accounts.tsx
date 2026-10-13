@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "preact/hooks";
 import {
   AlertTriangle,
   AtSign,
-  CheckCircle2,
   ExternalLink,
   KeyRound,
   Plus,
@@ -13,6 +12,7 @@ import {
   Users
 } from "lucide-preact";
 import { api } from "../api";
+import { Modal } from "../components/ui/Modal";
 import type { ThreadsAccount } from "../types";
 
 interface AccountsProps {
@@ -140,7 +140,7 @@ export function AccountsView({ notify }: AccountsProps) {
         </div>
       </header>
 
-      <div class="stats-bar">
+      <div class="stats-row stats-bar">
         <div class="stat-pill">
           <Users size={16} />
           <span>Всего аккаунтов: <strong>{accounts.length}</strong></span>
@@ -267,82 +267,78 @@ export function AccountsView({ notify }: AccountsProps) {
       )}
 
       {/* Add Account Modal */}
-      {modalOpen && (
-        <div class="modal-backdrop" onClick={() => setModalOpen(false)}>
-          <div class="modal-card" onClick={(e) => e.stopPropagation()}>
-            <div class="modal-header">
-              <h2>Подключение аккаунта Threads</h2>
-              <button class="modal-close" onClick={() => setModalOpen(false)}>✕</button>
-            </div>
-
-            <div class="modal-tabs">
-              <button
-                class={`modal-tab ${modalMode === "manual" ? "modal-tab--active" : ""}`}
-                onClick={() => setModalMode("manual")}
-              >
-                <KeyRound size={16} />
-                Ручной ввод токена
-              </button>
-              <button
-                class={`modal-tab ${modalMode === "oauth" ? "modal-tab--active" : ""}`}
-                onClick={() => setModalMode("oauth")}
-              >
-                <AtSign size={16} />
-                Threads OAuth
-              </button>
-            </div>
-
-            {modalMode === "manual" ? (
-              <form onSubmit={handleManualSubmit} class="modal-form">
-                <p class="modal-description">
-                  Введите Long-Lived Access Token аккаунта Threads. Имя пользователя и аватар загрузятся автоматически.
-                </p>
-
-                <div class="form-group">
-                  <label>Access Token (Long-Lived) *</label>
-                  <textarea
-                    rows={4}
-                    placeholder="EAA..."
-                    value={manualToken}
-                    onInput={(e) => setManualToken((e.target as HTMLTextAreaElement).value)}
-                    required
-                  />
-                </div>
-
-                <div class="form-group">
-                  <label>Никнейм @username (необязательно)</label>
-                  <input
-                    type="text"
-                    placeholder="Например: my_threads_account"
-                    value={manualUsername}
-                    onInput={(e) => setManualUsername((e.target as HTMLInputElement).value)}
-                  />
-                </div>
-
-                <div class="modal-actions">
-                  <button class="button button--secondary" type="button" onClick={() => setModalOpen(false)}>
-                    Отмена
-                  </button>
-                  <button class="button button--primary" type="submit" disabled={submitting}>
-                    {submitting ? "Проверка..." : "Подключить токен"}
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <div class="oauth-box">
-                <p class="modal-description">
-                  Авторизуйтесь через официальное окно входа Meta Threads. После успешного входа токен будет сохранён и автоматически обновляться каждые 60 дней.
-                </p>
-                <button class="button button--primary button--large" onClick={handleOAuthConnect}>
-                  <AtSign size={20} />
-                  Войти через Threads
-                </button>
-                <small class="oauth-hint">Требуется указанный THREADS_APP_ID и THREADS_APP_SECRET в .env файле сервера.</small>
-              </div>
-            )}
-          </div>
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Подключение аккаунта Threads"
+        size="md"
+      >
+        <div class="modal-tabs">
+          <button
+            class={`modal-tab ${modalMode === "manual" ? "modal-tab--active" : ""}`}
+            onClick={() => setModalMode("manual")}
+          >
+            <KeyRound size={16} />
+            Ручной ввод токена
+          </button>
+          <button
+            class={`modal-tab ${modalMode === "oauth" ? "modal-tab--active" : ""}`}
+            onClick={() => setModalMode("oauth")}
+          >
+            <AtSign size={16} />
+            Threads OAuth
+          </button>
         </div>
-      )}
+
+        {modalMode === "manual" ? (
+          <form onSubmit={handleManualSubmit} class="modal-form">
+            <p class="modal-description">
+              Введите Long-Lived Access Token аккаунта Threads. Имя пользователя и аватар загрузятся автоматически.
+            </p>
+
+            <div class="form-group">
+              <label>Access Token (Long-Lived) *</label>
+              <textarea
+                rows={4}
+                placeholder="EAA..."
+                value={manualToken}
+                onInput={(e) => setManualToken((e.target as HTMLTextAreaElement).value)}
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Никнейм @username (необязательно)</label>
+              <input
+                type="text"
+                placeholder="Например: my_threads_account"
+                value={manualUsername}
+                onInput={(e) => setManualUsername((e.target as HTMLInputElement).value)}
+              />
+            </div>
+
+            <div class="modal-actions">
+              <button class="button button--secondary" type="button" onClick={() => setModalOpen(false)}>
+                Отмена
+              </button>
+              <button class="button button--primary" type="submit" disabled={submitting}>
+                {submitting ? "Проверка..." : "Подключить токен"}
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div class="oauth-box">
+            <p class="modal-description">
+              Авторизуйтесь через официальное окно входа Meta Threads. После успешного входа токен будет сохранён и автоматически обновляться каждые 60 дней.
+            </p>
+            <button class="button button--primary button--large" onClick={handleOAuthConnect}>
+              <AtSign size={20} />
+              Войти через Threads
+            </button>
+            <small class="oauth-hint">Требуется указанный THREADS_APP_ID и THREADS_APP_SECRET в .env файле сервера.</small>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

@@ -209,7 +209,6 @@ export async function validateMedia(
   const audioSampleRate = parseNumber(audio?.sample_rate);
   const format = probe.format?.format_name;
   const issues: ValidationIssue[] = [];
-  const extension = extname(path).toLowerCase();
 
   if (size === 0) issue(issues, "error", "EMPTY_FILE", "The media file is empty.");
   if (size > 1_000_000_000) {

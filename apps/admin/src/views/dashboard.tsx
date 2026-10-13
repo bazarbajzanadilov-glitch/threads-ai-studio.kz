@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from "preact/hooks";
 import {
   Bell,
-  Calendar,
-  CheckCircle2,
   ChevronRight,
   Clock,
   ExternalLink,
@@ -11,7 +9,6 @@ import {
   RefreshCw,
   Send,
   Sliders,
-  Sparkles,
   Users,
   X
 } from "lucide-preact";
@@ -26,7 +23,7 @@ interface DashboardProps {
 
 export function DashboardView({ notify, onNavigate }: DashboardProps) {
   const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [quickPostModal, setQuickPostModal] = useState(false);

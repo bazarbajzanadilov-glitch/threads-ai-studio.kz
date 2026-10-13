@@ -1,5 +1,5 @@
 import { useState } from "preact/hooks";
-import { AtSign, KeyRound, Lock, LogIn, Mail, ShieldCheck } from "lucide-preact";
+import { AtSign, Lock, LogIn, Mail, ShieldCheck } from "lucide-preact";
 import { api } from "../api";
 import type { AdminUser } from "../types";
 

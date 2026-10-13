@@ -2,6 +2,8 @@ import { render, screen } from "@testing-library/preact";
 import { describe, expect, it, vi } from "vitest";
 import { AccountsView } from "./accounts";
 import { ScheduleView } from "./schedule";
+import { LogsView } from "./logs";
+import { QueueView } from "./queue";
 import { api } from "../api";
 
 describe("Admin Views Rendering", () => {
@@ -171,5 +173,49 @@ describe("Admin Views Rendering", () => {
     expect(screen.queryByText("Positions >")).toBeNull();
     expect(screen.queryByText("Food")).toBeNull();
     expect(screen.queryByText("Al-Bank")).toBeNull();
+  });
+
+  it("renders LogsView with history and events subnav tabs", async () => {
+    vi.spyOn(api, "getHistory").mockResolvedValueOnce([
+      {
+        id: "post_log_1",
+        account_id: "acc_1",
+        account_username: "bazarbay_kz",
+        text: "Журнал: пост опубликован в Threads",
+        image_filename: "photo.jpg",
+        image_url: "https://example.com/photo.jpg",
+        status: "published",
+        scheduled_at: "2026-10-13T10:00:00Z",
+        published_at: "2026-10-13T10:05:00Z",
+        permalink: "https://www.threads.net/@bazarbay_kz/post/xyz789",
+        created_at: "2026-10-13T09:00:00Z",
+        updated_at: "2026-10-13T10:05:00Z"
+      }
+    ]);
+
+    const notify = vi.fn();
+    render(<LogsView notify={notify} />);
+
+    expect(await screen.findByText("История и Журнал событий")).toBeTruthy();
+    expect(await screen.findByText("История публикаций")).toBeTruthy();
+    expect(await screen.findByText("Системный журнал событий")).toBeTruthy();
+    expect(await screen.findByText("Threads")).toBeTruthy();
+    expect(await screen.findByText("Журнал: пост опубликован в Threads")).toBeTruthy();
+  });
+
+  it("renders QueueView with filter toolbar and create button", async () => {
+    vi.spyOn(api, "getPosts").mockResolvedValueOnce({
+      posts: [],
+      total: 0
+    });
+    vi.spyOn(api, "getAccounts").mockResolvedValueOnce([]);
+
+    const notify = vi.fn();
+    render(<QueueView notify={notify} />);
+
+    expect(await screen.findByText("Публикации Threads")).toBeTruthy();
+    expect(await screen.findByText("Очередь публикаций пуста")).toBeTruthy();
+    const createBtns = await screen.findAllByText("Создать публикацию");
+    expect(createBtns.length).toBeGreaterThanOrEqual(1);
   });
 });

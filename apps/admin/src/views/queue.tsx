@@ -1,12 +1,8 @@
 import { useCallback, useEffect, useState } from "preact/hooks";
 import {
   AlertCircle,
-  Calendar,
-  Check,
-  CheckCircle2,
   Clock,
   ExternalLink,
-  ImageIcon,
   Pause,
   Play,
   Plus,
@@ -16,6 +12,7 @@ import {
   UploadCloud
 } from "lucide-preact";
 import { api } from "../api";
+import { Modal } from "../components/ui/Modal";
 import type { PostItem, ThreadsAccount } from "../types";
 
 interface QueueProps {
@@ -289,10 +286,11 @@ export function QueueView({ notify }: QueueProps) {
                       href={post.permalink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="permalink-button"
+                      class="trantor-threads-btn"
+                      title="Открыть публикацию в Threads"
                     >
-                      <ExternalLink size={13} />
-                      Открыть публикацию в Threads
+                      <span>Threads</span>
+                      <ExternalLink size={12} />
                     </a>
                   </div>
                 )}
@@ -339,163 +337,159 @@ export function QueueView({ notify }: QueueProps) {
       )}
 
       {/* Create Post Modal */}
-      {modalOpen && (
-        <div class="modal-backdrop" onClick={() => setModalOpen(false)}>
-          <div class="modal-card modal-card--lg" onClick={(e) => e.stopPropagation()}>
-            <div class="modal-header">
-              <h2>Создать публикацию Threads</h2>
-              <button class="modal-close" onClick={() => setModalOpen(false)}>✕</button>
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title="Создать публикацию Threads"
+        size="wide"
+      >
+        <form onSubmit={handleCreateSubmit} class="modal-form">
+          {/* Image Upload Area */}
+          <div class="form-group">
+            <label>Изображение (Строго 1 файл: JPG, PNG, WebP) *</label>
+            {uploadedImage ? (
+              <div class="image-preview-box">
+                <img src={uploadedImage.url} alt="Preview" class="preview-img" />
+                <div class="image-preview-info">
+                  <strong>{uploadedImage.filename}</strong>
+                  <span class="preview-url-text">{uploadedImage.url}</span>
+                  <button
+                    type="button"
+                    class="button button--secondary button--sm"
+                    onClick={() => setUploadedImage(null)}
+                  >
+                    Заменить изображение
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div class="upload-dropzone">
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handleFileUpload}
+                  id="image-file-input"
+                  disabled={uploading}
+                />
+                <label for="image-file-input" class="dropzone-label">
+                  <UploadCloud size={32} />
+                  <span>{uploading ? "Загрузка на сервер..." : "Выберите или перетащите изображение"}</span>
+                  <small>JPG, PNG или WebP до 20 МБ</small>
+                </label>
+              </div>
+            )}
+          </div>
+
+          {/* Text Input with Counter */}
+          <div class="form-group">
+            <div class="label-with-counter">
+              <label>Текст публикации (Threads limit: 500 символов)</label>
+              <span class={`counter-tag ${isOverLimit ? "counter-tag--error" : ""}`}>
+                {charCount} / 500
+              </span>
+            </div>
+            <textarea
+              rows={4}
+              placeholder="О чём хотите поделиться в Threads?"
+              value={text}
+              onInput={(e) => setText((e.target as HTMLTextAreaElement).value)}
+            />
+            {isOverLimit && (
+              <small class="field-error">Текст превышает допустимый лимит Threads (500 символов).</small>
+            )}
+          </div>
+
+          {/* Account Selection */}
+          <div class="form-group">
+            <label>Целевой аккаунт:</label>
+            <select
+              value={selectedAccountId}
+              onChange={(e) => setSelectedAccountId((e.target as HTMLSelectElement).value)}
+            >
+              <option value="all">
+                ★ Все активные аккаунты (распределить с задержкой / jitter)
+              </option>
+              {accounts.map((a) => (
+                <option key={a.id} value={a.id}>
+                  @{a.username} {a.is_active ? "" : "(на паузе)"}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Timing Options */}
+          <div class="form-group">
+            <label>Время публикации:</label>
+            <div class="radio-row">
+              <label class="radio-label">
+                <input
+                  type="radio"
+                  name="timing"
+                  checked={!publishImmediate}
+                  onChange={() => setPublishImmediate(false)}
+                />
+                <span>Запланировать по расписанию</span>
+              </label>
+              <label class="radio-label">
+                <input
+                  type="radio"
+                  name="timing"
+                  checked={publishImmediate}
+                  onChange={() => setPublishImmediate(true)}
+                />
+                <span>Опубликовать немедленно</span>
+              </label>
             </div>
 
-            <form onSubmit={handleCreateSubmit} class="modal-form">
-              {/* Image Upload Area */}
-              <div class="form-group">
-                <label>Изображение (Строго 1 файл: JPG, PNG, WebP) *</label>
-                {uploadedImage ? (
-                  <div class="image-preview-box">
-                    <img src={uploadedImage.url} alt="Preview" class="preview-img" />
-                    <div class="image-preview-info">
-                      <strong>{uploadedImage.filename}</strong>
-                      <span class="preview-url-text">{uploadedImage.url}</span>
-                      <button
-                        type="button"
-                        class="button button--secondary button--sm"
-                        onClick={() => setUploadedImage(null)}
-                      >
-                        Заменить изображение
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div class="upload-dropzone">
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp"
-                      onChange={handleFileUpload}
-                      id="image-file-input"
-                      disabled={uploading}
-                    />
-                    <label for="image-file-input" class="dropzone-label">
-                      <UploadCloud size={32} />
-                      <span>{uploading ? "Загрузка на сервер..." : "Выберите или перетащите изображение"}</span>
-                      <small>JPG, PNG или WebP до 20 МБ</small>
-                    </label>
-                  </div>
-                )}
-              </div>
-
-              {/* Text Input with Counter */}
-              <div class="form-group">
-                <div class="label-with-counter">
-                  <label>Текст публикации (Threads limit: 500 символов)</label>
-                  <span class={`counter-tag ${isOverLimit ? "counter-tag--error" : ""}`}>
-                    {charCount} / 500
-                  </span>
-                </div>
-                <textarea
-                  rows={4}
-                  placeholder="О чём хотите поделиться в Threads?"
-                  value={text}
-                  onInput={(e) => setText((e.target as HTMLTextAreaElement).value)}
+            {!publishImmediate && (
+              <div class="datetime-picker-row">
+                <input
+                  type="datetime-local"
+                  value={scheduledDate}
+                  onChange={(e) => setScheduledDate((e.target as HTMLInputElement).value)}
+                  required
                 />
-                {isOverLimit && (
-                  <small class="field-error">Текст превышает допустимый лимит Threads (500 символов).</small>
-                )}
+                <small>Время по часовому поясу Asia/Almaty (UTC+5)</small>
               </div>
-
-              {/* Account Selection */}
-              <div class="form-group">
-                <label>Целевой аккаунт:</label>
-                <select
-                  value={selectedAccountId}
-                  onChange={(e) => setSelectedAccountId((e.target as HTMLSelectElement).value)}
-                >
-                  <option value="all">
-                    ★ Все активные аккаунты (распределить с задержкой / jitter)
-                  </option>
-                  {accounts.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      @{a.username} {a.is_active ? "" : "(на паузе)"}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Timing Options */}
-              <div class="form-group">
-                <label>Время публикации:</label>
-                <div class="radio-row">
-                  <label class="radio-label">
-                    <input
-                      type="radio"
-                      name="timing"
-                      checked={!publishImmediate}
-                      onChange={() => setPublishImmediate(false)}
-                    />
-                    <span>Запланировать по расписанию</span>
-                  </label>
-                  <label class="radio-label">
-                    <input
-                      type="radio"
-                      name="timing"
-                      checked={publishImmediate}
-                      onChange={() => setPublishImmediate(true)}
-                    />
-                    <span>Опубликовать немедленно</span>
-                  </label>
-                </div>
-
-                {!publishImmediate && (
-                  <div class="datetime-picker-row">
-                    <input
-                      type="datetime-local"
-                      value={scheduledDate}
-                      onChange={(e) => setScheduledDate((e.target as HTMLInputElement).value)}
-                      required
-                    />
-                    <small>Время по часовому поясу Asia/Almaty (UTC+5)</small>
-                  </div>
-                )}
-              </div>
-
-              {/* Optional Meta Tags */}
-              <div class="form-row">
-                <div class="form-group">
-                  <label>Тег темы (topic_tag, без #)</label>
-                  <input
-                    type="text"
-                    placeholder="Например: design, travel"
-                    value={topicTag}
-                    onInput={(e) => setTopicTag((e.target as HTMLInputElement).value)}
-                  />
-                </div>
-                <div class="form-group">
-                  <label>Alt-текст изображения (для слабовидящих)</label>
-                  <input
-                    type="text"
-                    placeholder="Краткое описание картинки"
-                    value={altText}
-                    onInput={(e) => setAltText((e.target as HTMLInputElement).value)}
-                  />
-                </div>
-              </div>
-
-              <div class="modal-actions">
-                <button class="button button--secondary" type="button" onClick={() => setModalOpen(false)}>
-                  Отмена
-                </button>
-                <button
-                  class="button button--primary"
-                  type="submit"
-                  disabled={submitting || isOverLimit || !uploadedImage}
-                >
-                  {submitting ? "Создание..." : publishImmediate ? "Опубликовать сейчас" : "Запланировать пост"}
-                </button>
-              </div>
-            </form>
+            )}
           </div>
-        </div>
-      )}
+
+          {/* Optional Meta Tags */}
+          <div class="form-row">
+            <div class="form-group">
+              <label>Тег темы (topic_tag, без #)</label>
+              <input
+                type="text"
+                placeholder="Например: design, travel"
+                value={topicTag}
+                onInput={(e) => setTopicTag((e.target as HTMLInputElement).value)}
+              />
+            </div>
+            <div class="form-group">
+              <label>Alt-текст изображения (для слабовидящих)</label>
+              <input
+                type="text"
+                placeholder="Краткое описание картинки"
+                value={altText}
+                onInput={(e) => setAltText((e.target as HTMLInputElement).value)}
+              />
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button class="button button--secondary" type="button" onClick={() => setModalOpen(false)}>
+              Отмена
+            </button>
+            <button
+              class="button button--primary"
+              type="submit"
+              disabled={submitting || isOverLimit || !uploadedImage}
+            >
+              {submitting ? "Создание..." : publishImmediate ? "Опубликовать сейчас" : "Запланировать пост"}
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

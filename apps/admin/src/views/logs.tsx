@@ -1,13 +1,10 @@
 import { useCallback, useEffect, useState } from "preact/hooks";
 import {
   AlertTriangle,
-  CheckCircle2,
   ExternalLink,
   FileText,
   History,
-  Info,
-  RefreshCw,
-  XCircle
+  RefreshCw
 } from "lucide-preact";
 import { api } from "../api";
 import type { PostItem, SystemEvent } from "../types";
@@ -126,10 +123,11 @@ export function LogsView({ notify }: LogsProps) {
                           href={item.permalink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          class="permalink-button"
+                          class="trantor-threads-btn"
+                          title="Открыть пост в Threads"
                         >
-                          <ExternalLink size={14} />
-                          Открыть в Threads ({item.permalink})
+                          <span>Threads</span>
+                          <ExternalLink size={12} />
                         </a>
                       </div>
                     )}

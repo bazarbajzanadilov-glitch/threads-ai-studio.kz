@@ -1,7 +1,6 @@
 import { Router, type Request, type Response } from "express";
 import { calculateJitterSlots, validateScheduleSettings } from "@publisher/core";
 import { getDb, logEvent } from "../db/index.js";
-import type { ThreadsAccountRecord } from "../threads/api.js";
 
 export const scheduleRouter = Router();
 

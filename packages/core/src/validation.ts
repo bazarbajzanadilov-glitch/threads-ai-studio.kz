@@ -1,6 +1,4 @@
 import {
-  CONTENT_FORMATS,
-  PLATFORMS,
   type ContentFormat,
   type ContentInput,
   type ContentPatch,

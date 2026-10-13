@@ -1,14 +1,10 @@
 import { useCallback, useEffect, useState } from "preact/hooks";
 import {
   CalendarClock,
-  CheckCircle2,
   Clock,
-  HelpCircle,
-  RefreshCw,
   Save,
   Shuffle,
-  Sliders,
-  Sparkles
+  Sliders
 } from "lucide-preact";
 import { api } from "../api";
 import type { JitterSlot, ScheduleSettings } from "../types";
@@ -30,7 +26,7 @@ export function ScheduleView({ notify }: ScheduleProps) {
   });
 
   const [slots, setSlots] = useState<JitterSlot[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [previewLoading, setPreviewLoading] = useState(false);
 
@@ -85,7 +81,7 @@ export function ScheduleView({ notify }: ScheduleProps) {
       const pData = await api.getSchedulePreview();
       setSlots(pData);
       notify("Сформирован новый случайный график задержек", "info");
-    } catch (err) {
+    } catch {
       notify("Не удалось обновить график", "error");
     } finally {
       setPreviewLoading(false);
@@ -169,26 +165,28 @@ export function ScheduleView({ notify }: ScheduleProps) {
               </div>
 
               <div class="checkbox-group">
-                <label class="checkbox-label">
+                <label class="ios-switch">
                   <input
                     type="checkbox"
                     checked={Boolean(settings.randomize_delay)}
-                    onChange={(e) => setSettings({ ...settings, randomize_delay: (e.target as HTMLInputElement).checked })}
+                    onChange={(e) => setSettings({ ...settings, randomize_delay: (e.target as HTMLInputElement).checked ? 1 : 0 })}
                   />
-                  <div>
-                    <strong>Случайный разброс (Random Jitter)</strong>
-                  </div>
+                  <span class="ios-switch-track">
+                    <span class="ios-switch-thumb" />
+                  </span>
+                  <span class="ios-switch-label">Случайный разброс (Random Jitter)</span>
                 </label>
 
-                <label class="checkbox-label">
+                <label class="ios-switch">
                   <input
                     type="checkbox"
                     checked={Boolean(settings.daily_enabled)}
-                    onChange={(e) => setSettings({ ...settings, daily_enabled: (e.target as HTMLInputElement).checked })}
+                    onChange={(e) => setSettings({ ...settings, daily_enabled: (e.target as HTMLInputElement).checked ? 1 : 0 })}
                   />
-                  <div>
-                    <strong>Автоматический планировщик активен</strong>
-                  </div>
+                  <span class="ios-switch-track">
+                    <span class="ios-switch-thumb" />
+                  </span>
+                  <span class="ios-switch-label">Автоматический планировщик активен</span>
                 </label>
               </div>
             </div>

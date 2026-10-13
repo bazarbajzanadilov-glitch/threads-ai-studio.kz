@@ -18,7 +18,7 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  override componentDidCatch(error: Error) {
+  override componentDidCatch(_error: Error) {
     // Keep error local
   }
 

@@ -2,7 +2,6 @@ import crypto from "node:crypto";
 import { Router, type Request, type Response, type NextFunction } from "express";
 import {
   ALLOWED_ADMIN_EMAILS,
-  ADMIN_EMAIL,
   SESSION_SECRET
 } from "../config.js";
 
