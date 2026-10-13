@@ -6,10 +6,12 @@ import {
   History,
   LayoutDashboard,
   LayoutList,
+  LogIn,
   LogOut,
   Send,
   Shield,
-  Users
+  Users,
+  X
 } from "lucide-preact";
 import { api } from "./api";
 import type { AdminUser } from "./types";
@@ -51,6 +53,7 @@ export function App() {
   const [activeTab, setActiveTab] = useState<Tab>(tabFromHash);
   const [clock, setClock] = useState(almatyClock);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const notify = useCallback((message: string, tone: "success" | "error" | "info" = "info") => {
     const id = Date.now() + Math.floor(Math.random() * 1000);
@@ -101,6 +104,11 @@ export function App() {
   }, []);
 
   const switchTab = (tab: Tab) => {
+    if (!currentUser && tab !== "dashboard") {
+      setShowLoginModal(true);
+      notify("Войдите в систему для доступа к управлению", "info");
+      return;
+    }
     setActiveTab(tab);
     window.location.hash = `#/${tab}`;
   };
@@ -117,23 +125,8 @@ export function App() {
         <div class="brand-glyph spin">
           <AtSign size={36} />
         </div>
-        <p>Инициализация Threads Auto-Publisher...</p>
+        <p>Инициализация Cardy Pay...</p>
       </div>
-    );
-  }
-
-  if (!currentUser) {
-    return (
-      <>
-        <LoginView onSuccess={setCurrentUser} notify={notify} />
-        <div class="toast-container">
-          {toasts.map((toast) => (
-            <div key={toast.id} class={`toast toast--${toast.tone}`}>
-              {toast.message}
-            </div>
-          ))}
-        </div>
-      </>
     );
   }
 
@@ -205,15 +198,29 @@ export function App() {
             <span>Алматы: <strong>{clock}</strong></span>
           </div>
 
-          <div class="user-pill">
-            <Shield size={14} />
-            <span class="user-email">{currentUser.email}</span>
-          </div>
+          {currentUser ? (
+            <div class="user-pill">
+              <Shield size={14} />
+              <span class="user-email">{currentUser.email}</span>
+            </div>
+          ) : (
+            <button
+              class="button button--primary button--sm"
+              type="button"
+              onClick={() => setShowLoginModal(true)}
+              title="Войти"
+            >
+              <LogIn size={14} />
+              <span>Войти</span>
+            </button>
+          )}
 
-          <button class="button button--ghost button--sm" type="button" onClick={handleLogout} title="Выйти">
-            <LogOut size={16} />
-            <span class="logout-label">Выход</span>
-          </button>
+          {currentUser && (
+            <button class="button button--ghost button--sm" type="button" onClick={handleLogout} title="Выйти">
+              <LogOut size={16} />
+              <span class="logout-label">Выход</span>
+            </button>
+          )}
         </div>
       </header>
 
@@ -226,56 +233,80 @@ export function App() {
         {activeTab === "logs" && <LogsView notify={notify} />}
       </main>
 
-      {/* Mobile Floating Bottom Dock (inspired by reference designs) */}
-      <nav class="mobile-dock-nav" aria-label="Мобильная навигация">
-        <button
-          class={`dock-item ${activeTab === "dashboard" ? "dock-item--active" : ""}`}
-          onClick={() => switchTab("dashboard")}
-          title="Главная"
-        >
-          <LayoutDashboard size={20} />
-          <span class="dock-label">Главная</span>
-        </button>
+      {/* Mobile Floating Bottom Dock (hidden on dashboard to avoid colliding with phone's dock) */}
+      {activeTab !== "dashboard" && (
+        <nav class="mobile-dock-nav" aria-label="Мобильная навигация">
+          <button
+            class={`dock-item ${(activeTab as Tab) === "dashboard" ? "dock-item--active" : ""}`}
+            onClick={() => switchTab("dashboard")}
+            title="Главная"
+          >
+            <LayoutDashboard size={20} />
+            <span class="dock-label">Главная</span>
+          </button>
 
-        <button
-          class={`dock-item ${activeTab === "accounts" ? "dock-item--active" : ""}`}
-          onClick={() => switchTab("accounts")}
-          title="Аккаунты"
-        >
-          <Users size={20} />
-          <span class="dock-label">Аккаунты</span>
-        </button>
+          <button
+            class={`dock-item ${activeTab === "accounts" ? "dock-item--active" : ""}`}
+            onClick={() => switchTab("accounts")}
+            title="Аккаунты"
+          >
+            <Users size={20} />
+            <span class="dock-label">Аккаунты</span>
+          </button>
 
-        {/* Hero Center Button for New Post */}
-        <button
-          class="dock-item dock-item--center"
-          onClick={() => switchTab("queue")}
-          title="Создать пост"
-        >
-          <div class="dock-center-circle">
-            <Send size={20} />
+          {/* Hero Center Button for New Post */}
+          <button
+            class="dock-item dock-item--center"
+            onClick={() => switchTab("queue")}
+            title="Создать пост"
+          >
+            <div class="dock-center-circle">
+              <Send size={20} />
+            </div>
+            <span class="dock-label">+ Пост</span>
+          </button>
+
+          <button
+            class={`dock-item ${activeTab === "schedule" ? "dock-item--active" : ""}`}
+            onClick={() => switchTab("schedule")}
+            title="Расписание"
+          >
+            <CalendarClock size={20} />
+            <span class="dock-label">График</span>
+          </button>
+
+          <button
+            class={`dock-item ${activeTab === "logs" ? "dock-item--active" : ""}`}
+            onClick={() => switchTab("logs")}
+            title="Журнал"
+          >
+            <History size={20} />
+            <span class="dock-label">Логи</span>
+          </button>
+        </nav>
+      )}
+
+      {/* Admin Login Modal Sheet */}
+      {showLoginModal && (
+        <div class="cardy-modal-backdrop" onClick={() => setShowLoginModal(false)}>
+          <div class="cardy-modal-sheet" style={{ maxWidth: "440px" }} onClick={(e) => e.stopPropagation()}>
+            <div class="cardy-sheet-handle" />
+            <div class="cardy-sheet-header">
+              <h3>Вход администратора</h3>
+              <button class="cardy-close-btn" onClick={() => setShowLoginModal(false)} type="button">
+                <X size={18} />
+              </button>
+            </div>
+            <LoginView
+              onSuccess={(user) => {
+                setCurrentUser(user);
+                setShowLoginModal(false);
+              }}
+              notify={notify}
+            />
           </div>
-          <span class="dock-label">+ Пост</span>
-        </button>
-
-        <button
-          class={`dock-item ${activeTab === "schedule" ? "dock-item--active" : ""}`}
-          onClick={() => switchTab("schedule")}
-          title="Расписание"
-        >
-          <CalendarClock size={20} />
-          <span class="dock-label">График</span>
-        </button>
-
-        <button
-          class={`dock-item ${activeTab === "logs" ? "dock-item--active" : ""}`}
-          onClick={() => switchTab("logs")}
-          title="Журнал"
-        >
-          <History size={20} />
-          <span class="dock-label">Логи</span>
-        </button>
-      </nav>
+        </div>
+      )}
 
       {/* Toasts */}
       <div class="toast-container">
