@@ -96,10 +96,10 @@ export function ScheduleView({ notify }: ScheduleProps) {
     <div class="view schedule-view">
       <header class="view-header">
         <div>
-          <span class="eyebrow">Авто-публикация и Анти-спам защита</span>
+          <span class="eyebrow">Автопилот Threads</span>
           <h1>Расписание и Задержки (Jitter)</h1>
           <p>
-            Настройка дневного окна публикаций и случайных пауз между постами разных аккаунтов для полной защиты от спам-фильтров Meta.
+            Окно публикаций и рандомизация пауз для защиты от анти-спам фильтров.
           </p>
         </div>
       </header>
@@ -115,7 +115,6 @@ export function ScheduleView({ notify }: ScheduleProps) {
           <form onSubmit={handleSave} class="schedule-form">
             <div class="form-section">
               <h3>Дневное окно публикаций</h3>
-              <p class="form-hint">В это время сервер распределяет публикации по активным аккаунтам.</p>
 
               <div class="form-row">
                 <div class="form-group">
@@ -146,11 +145,10 @@ export function ScheduleView({ notify }: ScheduleProps) {
 
             <div class="form-section">
               <h3>Интервалы и Задержки между аккаунтами (Jitter)</h3>
-              <p class="form-hint">Случайная задержка защищает аккаунты от одновременной подозрительной активности.</p>
 
               <div class="form-row">
                 <div class="form-group">
-                  <label>Минимальная пауза (мин):</label>
+                  <label>Минимум (мин):</label>
                   <input
                     type="number"
                     min="1"
@@ -161,7 +159,7 @@ export function ScheduleView({ notify }: ScheduleProps) {
                   />
                 </div>
                 <div class="form-group">
-                  <label>Максимальная пауза (мин):</label>
+                  <label>Максимум (мин):</label>
                   <input
                     type="number"
                     min="1"
@@ -181,8 +179,7 @@ export function ScheduleView({ notify }: ScheduleProps) {
                     onChange={(e) => setSettings({ ...settings, randomize_delay: (e.target as HTMLInputElement).checked })}
                   />
                   <div>
-                    <strong>Включить случайный разброс (Random Jitter)</strong>
-                    <small>Каждый пост будет отправляться с непредсказуемой паузой в диапазоне {settings.min_delay_minutes}–{settings.max_delay_minutes} мин.</small>
+                    <strong>Случайный разброс (Random Jitter)</strong>
                   </div>
                 </label>
 
@@ -193,8 +190,7 @@ export function ScheduleView({ notify }: ScheduleProps) {
                     onChange={(e) => setSettings({ ...settings, daily_enabled: (e.target as HTMLInputElement).checked })}
                   />
                   <div>
-                    <strong>Автоматический планировщик включен</strong>
-                    <small>Фоновый процесс регулярно проверяет очередь и публикует посты.</small>
+                    <strong>Автоматический планировщик активен</strong>
                   </div>
                 </label>
               </div>
@@ -221,13 +217,9 @@ export function ScheduleView({ notify }: ScheduleProps) {
               disabled={previewLoading}
             >
               <Shuffle size={14} class={previewLoading ? "spin" : ""} />
-              Пересчитать джиттер
+              Пересчитать
             </button>
           </div>
-
-          <p class="card-description">
-            Моделирование времени отправки постов для активных аккаунтов на основе окна с <strong>{settings.window_start}</strong> по <strong>{settings.window_end}</strong> и пауз <strong>{settings.min_delay_minutes}–{settings.max_delay_minutes} мин</strong>.
-          </p>
 
           {slots.length === 0 ? (
             <div class="empty-state">

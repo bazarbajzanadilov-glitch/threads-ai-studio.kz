@@ -125,7 +125,7 @@ export function App() {
         <div class="brand-glyph spin">
           <AtSign size={36} />
         </div>
-        <p>Инициализация Cardy Pay...</p>
+        <p>Инициализация Threads Studio...</p>
       </div>
     );
   }
@@ -135,11 +135,11 @@ export function App() {
       {/* Top Navbar */}
       <header class="app-topbar">
         <div class="topbar-left">
-          <div class="topbar-brand">
+          <div class="topbar-brand" onClick={() => switchTab("dashboard")} style={{ cursor: "pointer" }}>
             <span class="brand-logo">
               <AtSign size={20} />
             </span>
-            <span class="brand-title">Threads Auto-Publisher</span>
+            <span class="brand-title">Threads Studio</span>
           </div>
 
           <nav class="topbar-nav">
@@ -164,7 +164,7 @@ export function App() {
               onClick={() => switchTab("queue")}
             >
               <Send size={16} />
-              <span>Публикации / Очередь</span>
+              <span>Очередь (+ Пост)</span>
             </button>
 
             <button
@@ -172,7 +172,7 @@ export function App() {
               onClick={() => switchTab("schedule")}
             >
               <CalendarClock size={16} />
-              <span>Расписание & Задержки</span>
+              <span>График & Задержки</span>
             </button>
 
             <button
@@ -180,16 +180,9 @@ export function App() {
               onClick={() => switchTab("logs")}
             >
               <History size={16} />
-              <span>История & Журнал</span>
+              <span>Логи</span>
             </button>
           </nav>
-          <div class="mobile-greeting">
-            <div class="mobile-avatar">Б</div>
-            <div class="mobile-greeting-info">
-              <span class="mobile-greeting-sub">Добро пожаловать,</span>
-              <span class="mobile-greeting-name">Базарбай 👋</span>
-            </div>
-          </div>
         </div>
 
         <div class="topbar-right">
@@ -233,67 +226,65 @@ export function App() {
         {activeTab === "logs" && <LogsView notify={notify} />}
       </main>
 
-      {/* Mobile Floating Bottom Dock (hidden on dashboard to avoid colliding with phone's dock) */}
-      {activeTab !== "dashboard" && (
-        <nav class="mobile-dock-nav" aria-label="Мобильная навигация">
-          <button
-            class={`dock-item ${(activeTab as Tab) === "dashboard" ? "dock-item--active" : ""}`}
-            onClick={() => switchTab("dashboard")}
-            title="Главная"
-          >
-            <LayoutDashboard size={20} />
-            <span class="dock-label">Главная</span>
-          </button>
+      {/* Mobile Floating Bottom Dock (single consistent dock across all tabs) */}
+      <nav class="mobile-dock-nav" aria-label="Мобильная навигация">
+        <button
+          class={`dock-item ${activeTab === "dashboard" ? "dock-item--active" : ""}`}
+          onClick={() => switchTab("dashboard")}
+          title="Главная"
+        >
+          <LayoutDashboard size={20} />
+          <span class="dock-label">Главная</span>
+        </button>
 
-          <button
-            class={`dock-item ${activeTab === "accounts" ? "dock-item--active" : ""}`}
-            onClick={() => switchTab("accounts")}
-            title="Аккаунты"
-          >
-            <Users size={20} />
-            <span class="dock-label">Аккаунты</span>
-          </button>
+        <button
+          class={`dock-item ${activeTab === "accounts" ? "dock-item--active" : ""}`}
+          onClick={() => switchTab("accounts")}
+          title="Аккаунты"
+        >
+          <Users size={20} />
+          <span class="dock-label">Аккаунты</span>
+        </button>
 
-          {/* Hero Center Button for New Post */}
-          <button
-            class="dock-item dock-item--center"
-            onClick={() => switchTab("queue")}
-            title="Создать пост"
-          >
-            <div class="dock-center-circle">
-              <Send size={20} />
-            </div>
-            <span class="dock-label">+ Пост</span>
-          </button>
+        {/* Hero Center Button for New Post */}
+        <button
+          class="dock-item dock-item--center"
+          onClick={() => switchTab("queue")}
+          title="Создать пост"
+        >
+          <div class="dock-center-circle">
+            <Send size={20} />
+          </div>
+          <span class="dock-label">+ Пост</span>
+        </button>
 
-          <button
-            class={`dock-item ${activeTab === "schedule" ? "dock-item--active" : ""}`}
-            onClick={() => switchTab("schedule")}
-            title="Расписание"
-          >
-            <CalendarClock size={20} />
-            <span class="dock-label">График</span>
-          </button>
+        <button
+          class={`dock-item ${activeTab === "schedule" ? "dock-item--active" : ""}`}
+          onClick={() => switchTab("schedule")}
+          title="Расписание"
+        >
+          <CalendarClock size={20} />
+          <span class="dock-label">График</span>
+        </button>
 
-          <button
-            class={`dock-item ${activeTab === "logs" ? "dock-item--active" : ""}`}
-            onClick={() => switchTab("logs")}
-            title="Журнал"
-          >
-            <History size={20} />
-            <span class="dock-label">Логи</span>
-          </button>
-        </nav>
-      )}
+        <button
+          class={`dock-item ${activeTab === "logs" ? "dock-item--active" : ""}`}
+          onClick={() => switchTab("logs")}
+          title="Журнал"
+        >
+          <History size={20} />
+          <span class="dock-label">Логи</span>
+        </button>
+      </nav>
 
       {/* Admin Login Modal Sheet */}
       {showLoginModal && (
-        <div class="cardy-modal-backdrop" onClick={() => setShowLoginModal(false)}>
-          <div class="cardy-modal-sheet" style={{ maxWidth: "440px" }} onClick={(e) => e.stopPropagation()}>
-            <div class="cardy-sheet-handle" />
-            <div class="cardy-sheet-header">
+        <div class="trantor-modal-backdrop" onClick={() => setShowLoginModal(false)}>
+          <div class="trantor-modal-sheet" style={{ maxWidth: "440px" }} onClick={(e) => e.stopPropagation()}>
+            <div class="trantor-sheet-handle" />
+            <div class="trantor-sheet-header">
               <h3>Вход администратора</h3>
-              <button class="cardy-close-btn" onClick={() => setShowLoginModal(false)} type="button">
+              <button class="trantor-close-btn" onClick={() => setShowLoginModal(false)} type="button">
                 <X size={18} />
               </button>
             </div>
