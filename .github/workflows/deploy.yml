@@ -1,0 +1,71 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Cloudflare and GitHub environment
+        required: true
+        type: choice
+        options:
+          - test
+          - production
+        default: test
+      run_health_check:
+        description: Wait for a fresh cron and verify the public endpoint
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment: ${{ inputs.environment }}
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      PUBLIC_URL: ${{ vars.PUBLIC_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install exact dependencies
+        run: npm ci
+
+      - name: Validate repository
+        run: npm run check
+
+      - name: Reject deployment placeholders and mismatched R2 policy
+        run: node scripts/assert-configured.mjs --environment ${{ inputs.environment }}
+
+      - name: Apply media-bucket CORS and incomplete-multipart lifecycle
+        run: |
+          npx wrangler r2 bucket cors set publisher-${{ inputs.environment }} --file infra/r2-cors.${{ inputs.environment }}.json --force
+          npx wrangler r2 bucket lifecycle set publisher-${{ inputs.environment }} --file infra/r2-lifecycle.json --force
+
+      - name: Apply D1 migrations
+        run: npm run db:migrate:${{ inputs.environment }} -w @publisher/api-worker
+
+      - name: Deploy API and admin first
+        run: npm run deploy:${{ inputs.environment }} -w @publisher/api-worker
+
+      - name: Deploy public callbacks second
+        run: npm run deploy:${{ inputs.environment }} -w @publisher/public-worker
+
+      - name: Verify public privacy, D1, and cron freshness
+        if: ${{ inputs.run_health_check }}
+        run: node scripts/verify-deployment.mjs --public-url "$PUBLIC_URL" --wait-seconds 240

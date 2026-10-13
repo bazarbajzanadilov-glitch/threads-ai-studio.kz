@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install exact dependencies
+        run: npm ci
+
+      - name: Check required toolchain
+        run: node scripts/check-prerequisites.mjs
+
+      - name: Lint, typecheck, test, and dry-run builds
+        run: npm run check
+
+      - name: Validate recovery parser in dry-run mode
+        run: node scripts/restore-snapshot.mjs scripts/fixtures/recovery-smoke.jsonl
+
+      - name: Parse infrastructure JSON
+        shell: bash
+        run: |
+          node -e "for (const f of ['infra/r2-cors.test.json','infra/r2-cors.production.json','infra/r2-lifecycle.json']) JSON.parse(require('fs').readFileSync(f,'utf8'))"
+
