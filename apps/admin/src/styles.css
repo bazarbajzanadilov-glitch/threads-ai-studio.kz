@@ -5,40 +5,47 @@
    ========================================================================== */
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Inter, sans-serif;
 
-  /* OLED Deep Canvas */
-  --bg-app: #08080a;
-  --bg-surface: #121217;
-  --bg-surface-elevated: #1a1a24;
-  --bg-surface-card: #15151c;
-  --bg-glass: rgba(18, 18, 24, 0.88);
+  /* Cardy Pay Signature Light Palette */
+  --bg-app: #EBECEF;
+  --bg-canvas: #EBECEF;
+  --bg-surface: #FFFFFF;
+  --bg-surface-elevated: #F8F9FA;
+  --bg-surface-card: #FFFFFF;
+  --bg-glass: rgba(235, 236, 239, 0.94);
+
+  /* Cardy Pay Exact Colors */
+  --cardy-dark: #1C1D21;
+  --cardy-coral: #EB4848;
+  --cardy-silver: #DFE2E7;
+  --cardy-phone-screen: #F2F3F5;
 
   /* Subtle Borders & Dividers */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.16);
-  --border-focus: rgba(99, 102, 241, 0.6);
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.16);
+  --border-focus: #EB4848;
 
   /* Text Colors */
-  --text-primary: #ffffff;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
+  --text-primary: #121316;
+  --text-secondary: #4B5563;
+  --text-muted: #8E8E93;
 
   /* Reference Pastel & Neon Accents */
-  --accent-yellow-mesh: #e6f5a3;
-  --accent-mint: #34d399;
+  --accent-yellow-mesh: #fef08a;
+  --accent-mint: #10b981;
   --accent-mint-deep: #059669;
-  --accent-indigo: #818cf8;
-  --accent-indigo-deep: #4f46e5;
-  --accent-coral: #fb7185;
-  --accent-amber: #fbbf24;
+  --accent-indigo: #4f46e5;
+  --accent-indigo-deep: #3730a3;
+  --accent-coral: #EB4848;
+  --accent-amber: #d97706;
 
   /* Reference Gradients */
-  --grad-hero-mesh: linear-gradient(135deg, rgba(230, 245, 163, 0.16) 0%, rgba(52, 211, 153, 0.12) 40%, rgba(99, 102, 241, 0.1) 100%);
-  --grad-primary-button: linear-gradient(135deg, #818cf8 0%, #4f46e5 100%);
-  --grad-plus-circle: linear-gradient(135deg, #818cf8 0%, #6366f1 50%, #4f46e5 100%);
-  --grad-mint-pill: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  --grad-hero-mesh: linear-gradient(135deg, rgba(235, 72, 72, 0.08) 0%, rgba(16, 185, 129, 0.08) 50%, rgba(79, 70, 229, 0.08) 100%);
+  --grad-primary-button: #1C1D21;
+  --grad-plus-circle: #1C1D21;
+  --grad-mint-pill: linear-gradient(135deg, #10b981 0%, #059669 100%);
 
   /* Geometry & Touch Targets */
   --radius-hero: 28px;
@@ -48,9 +55,9 @@
   --touch-target: 48px;
 
   /* Shadows */
-  --shadow-dock: 0 20px 48px rgba(0, 0, 0, 0.75);
-  --shadow-card: 0 12px 36px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 8px 24px rgba(99, 102, 241, 0.45);
+  --shadow-dock: 0 16px 36px rgba(0, 0, 0, 0.28);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-glow: 0 8px 24px rgba(235, 72, 72, 0.35);
 }
 
 /* Base Reset */
@@ -1971,4 +1978,981 @@ input:focus, select:focus, textarea:focus {
   background: #1e1b4b;
   color: #818cf8;
   border-color: #4f46e5;
+}
+
+/* ==========================================================================
+   CARDY PAY — 1-in-1 PIXEL-PERFECT VISUAL IDENTITY & IOS DEVICE MOCKUPS
+   Matches user uploaded reference: media_1791901864217_cba95fc5.jpg
+   ========================================================================== */
+
+.cardy-outer-canvas {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem 0 3rem;
+}
+
+/* Status Ribbon */
+.cardy-admin-status-ribbon {
+  width: 100%;
+  max-width: 1220px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-pill);
+  padding: 0.6rem 1.25rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.cardy-status-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+}
+
+.cardy-status-title {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.cardy-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: #F3F4F6;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.cardy-status-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.cardy-status-meta {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.cardy-status-meta strong {
+  color: var(--text-primary);
+}
+
+.cardy-status-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cardy-mini-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: #FFFFFF;
+  color: var(--text-primary);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cardy-mini-btn:hover {
+  background: #F3F4F6;
+}
+
+.cardy-mini-btn--primary {
+  background: #1C1D21;
+  color: #FFFFFF;
+  border-color: #1C1D21;
+}
+
+.cardy-mini-btn--primary:hover {
+  background: #000000;
+}
+
+/* Showcase Header (Cardy Pay title & statement) */
+.cardy-showcase-header {
+  width: 100%;
+  max-width: 1220px;
+  margin-bottom: 2.25rem;
+  padding: 0 0.5rem;
+}
+
+.cardy-showcase-title {
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: #111827;
+  margin: 0 0 0.85rem 0;
+  line-height: 1.1;
+}
+
+.cardy-showcase-subtitle {
+  font-size: clamp(0.95rem, 1.8vw, 1.05rem);
+  color: #4B5563;
+  line-height: 1.6;
+  max-width: 760px;
+  margin: 0;
+}
+
+/* Mobile Screen Switcher Pills */
+.cardy-screen-switcher-pills {
+  display: none;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 380px;
+  justify-content: center;
+}
+
+.cardy-switch-pill {
+  flex: 1;
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #E5E7EB;
+  color: #4B5563;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.cardy-switch-pill--active {
+  background: #1C1D21;
+  color: #FFFFFF;
+  border-color: #1C1D21;
+}
+
+/* Mockup Stage: 3 iPhones Side-by-Side */
+.cardy-mockup-stage {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2.25rem;
+  width: 100%;
+  max-width: 1260px;
+}
+
+/* Phone Frame */
+.cardy-phone-frame {
+  flex: 1;
+  max-width: 375px;
+  min-width: 330px;
+  background: #000000;
+  border: 11px solid #18191D;
+  border-radius: 54px;
+  box-shadow: 0 28px 70px -15px rgba(0, 0, 0, 0.32), 0 10px 24px -5px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.cardy-phone-frame:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 34px 80px -15px rgba(0, 0, 0, 0.38), 0 14px 28px -5px rgba(0, 0, 0, 0.2);
+}
+
+.cardy-phone-inner {
+  background: #F2F3F5;
+  border-radius: 43px;
+  overflow: hidden;
+  position: relative;
+  min-height: 740px;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardy-screen-content {
+  padding: 0.75rem 1.15rem 5.75rem;
+  position: relative;
+  min-height: 740px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* iOS Status Bar */
+.cardy-ios-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.2rem 0.35rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1C1D21;
+  user-select: none;
+}
+
+.cardy-status-time {
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.cardy-dynamic-island {
+  width: 88px;
+  height: 24px;
+  background: #000000;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+}
+
+.cardy-island-camera {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #111116;
+  box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.25);
+}
+
+.cardy-status-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* Phone Header */
+.cardy-phone-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.15rem;
+  padding: 0 0.15rem;
+}
+
+.cardy-welcome-text {
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #1C1D21;
+}
+
+.cardy-bell-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardy-bell-dot {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #EB4848;
+  border: 1.5px solid #F2F3F5;
+}
+
+/* Hero Balance Section */
+.cardy-hero-balance-section {
+  margin-bottom: 1.15rem;
+  padding: 0 0.15rem;
+}
+
+.cardy-balance-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.cardy-balance-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #1C1D21;
+}
+
+.cardy-balance-pill {
+  background: #E5E7EB;
+  color: #6B7280;
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+}
+
+/* Dark Chart Card (Screen 1) */
+.cardy-dark-chart-card {
+  background: #1C1D21;
+  border-radius: 24px;
+  padding: 1.1rem 1rem 0.85rem;
+  color: #FFFFFF;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+.cardy-spline-container {
+  display: flex;
+  gap: 0.4rem;
+  height: 110px;
+  position: relative;
+  margin-bottom: 0.65rem;
+}
+
+.cardy-spline-y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: #6B7280;
+  font-weight: 500;
+  padding-bottom: 8px;
+  user-select: none;
+}
+
+.cardy-spline-graph-wrap {
+  flex: 1;
+  position: relative;
+  height: 100%;
+}
+
+.cardy-spline-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+.cardy-peak-badge-wrap {
+  position: absolute;
+  right: 17%;
+  top: 14px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.cardy-peak-badge {
+  background: #EB4848;
+  color: #FFFFFF;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2.5px 7px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 2px 8px rgba(235, 72, 72, 0.4);
+}
+
+.cardy-time-filters-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.4rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cardy-time-tab {
+  background: transparent;
+  border: none;
+  color: #8E8E93;
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 4px 7px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cardy-time-tab--active {
+  background: #2C2D33;
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+/* Recepients Section */
+.cardy-section-block {
+  margin-bottom: 1.15rem;
+  padding: 0 0.15rem;
+}
+
+.cardy-section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.cardy-section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1C1D21;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.cardy-dropdown-label {
+  font-size: 0.78rem;
+  color: #8E8E93;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.cardy-recepients-scroll {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
+}
+
+.cardy-avatar-item {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #DFE2E7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardy-avatar-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cardy-avatar-count-badge {
+  background: #1C1D21;
+  color: #FFFFFF;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+/* Transactions History List */
+.cardy-transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.cardy-tx-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.2rem 0;
+  cursor: pointer;
+}
+
+.cardy-tx-icon-tile {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #1C1D21;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.cardy-tx-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardy-tx-name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1C1D21;
+}
+
+.cardy-tx-sub {
+  font-size: 0.74rem;
+  color: #8E8E93;
+  margin-top: 1px;
+}
+
+.cardy-tx-amount {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.cardy-tx-amount--expense {
+  color: #1C1D21;
+}
+
+.cardy-tx-amount--income {
+  color: #1C1D21;
+}
+
+/* Screen 2: Filter Pills & Light Chart */
+.cardy-pill-tabs-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+  padding: 0 0.15rem;
+}
+
+.cardy-filter-pill {
+  padding: 5px 15px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: transparent;
+  color: #8E8E93;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cardy-filter-pill--active {
+  background: #EB4848;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.cardy-light-chart-card {
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 1rem 0.85rem 0.85rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.cardy-spline-light-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.cardy-time-days-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem 0;
+  color: #8E8E93;
+  font-size: 0.75rem;
+  font-weight: 500;
+  user-select: none;
+}
+
+/* Screen 3: Split Cards & Token Bonus */
+.cardy-split-cards-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  padding: 0 0.15rem;
+}
+
+.cardy-split-card {
+  background: #DFE2E7;
+  border-radius: 18px;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.cardy-split-card:hover {
+  transform: translateY(-2px);
+}
+
+.cardy-split-card-header {
+  font-size: 0.75rem;
+  color: #6B7280;
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+}
+
+.cardy-split-card-val {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: #1C1D21;
+  letter-spacing: -0.02em;
+}
+
+.cardy-token-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cardy-token-today-badge {
+  background: #1C1D21;
+  color: #FFFFFF;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2.5px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.cardy-token-bonus-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.cardy-token-left-card {
+  background: #1C1D21;
+  border-radius: 22px;
+  padding: 1.15rem 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  color: #FFFFFF;
+  text-align: center;
+  min-height: 200px;
+}
+
+.cardy-donut-center-wrap {
+  position: relative;
+  width: 86px;
+  height: 86px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardy-donut-svg {
+  display: block;
+}
+
+.cardy-token-text-center {
+  margin: 0.5rem 0 0;
+}
+
+.cardy-token-main-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.cardy-token-sub-label {
+  font-size: 0.7rem;
+  color: #8E8E93;
+  margin-top: 1px;
+}
+
+.cardy-token-tb-pill {
+  background: #EB4848;
+  color: #FFFFFF;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3.5px 13px;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.03em;
+  margin-top: 0.65rem;
+}
+
+.cardy-token-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  justify-content: space-between;
+}
+
+.cardy-bonus-coral-card {
+  background: #EB4848;
+  border-radius: 20px;
+  padding: 0.85rem 1rem;
+  color: #FFFFFF;
+  cursor: pointer;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.15s ease;
+}
+
+.cardy-bonus-coral-card:hover {
+  transform: translateY(-2px);
+}
+
+.cardy-bonus-dark-card {
+  background: #1C1D21;
+  border-radius: 20px;
+  padding: 0.85rem 1rem;
+  color: #FFFFFF;
+  cursor: pointer;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.15s ease;
+}
+
+.cardy-bonus-dark-card:hover {
+  transform: translateY(-2px);
+}
+
+.cardy-bonus-card-icon {
+  margin-bottom: 0.4rem;
+}
+
+.cardy-bonus-card-label {
+  font-size: 0.72rem;
+  opacity: 0.85;
+  font-weight: 500;
+}
+
+.cardy-bonus-card-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-top: 2px;
+}
+
+/* Floating Bottom Dock */
+.cardy-floating-dock-wrap {
+  position: absolute;
+  bottom: 22px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0 1rem;
+  z-index: 10;
+}
+
+.cardy-capsule-dock {
+  height: 52px;
+  background: #1C1D21;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  padding: 0 1.25rem;
+  gap: 1.6rem;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+.cardy-dock-btn {
+  background: transparent;
+  border: none;
+  color: #8E8E93;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 6px;
+  transition: all 0.15s ease;
+}
+
+.cardy-dock-btn:hover {
+  color: #FFFFFF;
+}
+
+.cardy-dock-btn--active {
+  color: #FFFFFF;
+}
+
+.cardy-circle-plus-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #1C1D21;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.cardy-circle-plus-btn:hover {
+  background: #000000;
+  transform: scale(1.05);
+}
+
+.cardy-home-indicator {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 4px;
+  background: #1C1D21;
+  border-radius: var(--radius-pill);
+}
+
+/* Modals & Drawers */
+.cardy-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.cardy-modal-sheet {
+  width: 100%;
+  max-width: 480px;
+  background: #FFFFFF;
+  border-radius: 28px 28px 0 0;
+  padding: 1.25rem 1.5rem 2rem;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.cardy-sheet-handle {
+  width: 38px;
+  height: 4px;
+  background: #E5E7EB;
+  border-radius: var(--radius-pill);
+  margin: 0 auto 1.15rem;
+}
+
+.cardy-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.cardy-sheet-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.cardy-close-btn {
+  background: #F3F4F6;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #4B5563;
+}
+
+.cardy-post-input {
+  width: 100%;
+  border: 1px solid #E5E7EB;
+  border-radius: 16px;
+  padding: 0.85rem 1rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: #111827;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.cardy-post-input:focus {
+  border-color: #EB4848;
+}
+
+.cardy-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.cardy-button--secondary {
+  background: #F3F4F6;
+  color: #4B5563;
+}
+
+.cardy-button--coral {
+  background: #EB4848;
+  color: #FFFFFF;
+}
+
+.cardy-button--coral:hover {
+  background: #D93B3B;
+}
+
+.cardy-noti-item {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.cardy-noti-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #EB4848;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.cardy-noti-item strong {
+  display: block;
+  font-size: 0.92rem;
+  color: #111827;
+}
+
+.cardy-noti-item p {
+  margin: 0.2rem 0 0;
+  font-size: 0.82rem;
+  color: #6B7280;
+}
+
+/* Responsive Rules for Small Devices */
+@media (max-width: 1100px) {
+  .cardy-screen-switcher-pills {
+    display: flex;
+  }
+  .cardy-mockup-stage {
+    gap: 1.5rem;
+  }
+  .cardy-phone-frame {
+    display: none;
+  }
+  .cardy-phone-frame--highlight {
+    display: block;
+    width: 100%;
+    max-width: 375px;
+  }
 }

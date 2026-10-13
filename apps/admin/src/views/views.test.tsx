@@ -68,5 +68,60 @@ describe("Admin Views Rendering", () => {
     expect(await screen.findByText("Главная Панель")).toBeTruthy();
     expect(await screen.findByText(/Автопостинг Threads: ВКЛЮЧЕН/)).toBeTruthy();
   });
+
+  it("renders 1-in-1 Cardy Pay design components across all 3 screens", async () => {
+    vi.spyOn(api, "getDashboard").mockResolvedValueOnce({
+      uptime_seconds: 3600,
+      server_time: new Date().toISOString(),
+      accounts: { total: 4, active: 4, list: [] },
+      posts: { scheduled: 2, published_total: 10, published_today: 3, failed: 0 },
+      next_post: null,
+      recent_published: [],
+      schedule: {
+        window_start: "12:00",
+        window_end: "21:00",
+        timezone: "Asia/Almaty",
+        min_delay_minutes: 15,
+        max_delay_minutes: 45,
+        randomize_delay: 1,
+        daily_enabled: 1,
+        updated_at: new Date().toISOString(),
+      },
+      storage: { used_bytes: 1048576, limit_bytes: 10737418240 },
+    });
+
+    const notify = vi.fn();
+    const onNavigate = vi.fn();
+    const { DashboardView } = await import("./dashboard");
+    render(<DashboardView notify={notify} onNavigate={onNavigate} />);
+
+    // Cardy Pay Header
+    expect(await screen.findByText("Cardy Pay")).toBeTruthy();
+
+    // Screen 1 Hero & Chart
+    const welcomeMatches = await screen.findAllByText("Welcome, John!");
+    expect(welcomeMatches.length).toBeGreaterThanOrEqual(1);
+
+    const balanceMatches = await screen.findAllByText("$ 13,553.00");
+    expect(balanceMatches.length).toBeGreaterThanOrEqual(1);
+
+    expect(await screen.findByText("$400")).toBeTruthy();
+    expect(await screen.findByText("Recepients")).toBeTruthy();
+    expect(await screen.findByText("+3")).toBeTruthy();
+
+    // Screen 2 Elements
+    expect(await screen.findByText("Main")).toBeTruthy();
+    expect(await screen.findByText("$409")).toBeTruthy();
+    expect(await screen.findByText("Wine Shop")).toBeTruthy();
+
+    // Screen 3 Elements
+    expect(await screen.findByText("Token Bonus")).toBeTruthy();
+    expect(await screen.findByText("31%")).toBeTruthy();
+    expect(await screen.findByText("8990TB")).toBeTruthy();
+    expect(await screen.findByText("$22.42")).toBeTruthy();
+    expect(await screen.findByText("$122.00")).toBeTruthy();
+    expect(await screen.findByText("Positions >")).toBeTruthy();
+    expect(await screen.findByText("Cash >")).toBeTruthy();
+  });
 });
 
