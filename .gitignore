@@ -17,3 +17,5 @@ prepared-media/
 downloads/
 data/
 *.db
+env.local
+*.local
